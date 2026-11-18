@@ -1,12 +1,12 @@
 # AI Coding Tool Validation Kit
 
-> **Complear's fork.** This is [Complear](https://complear.com)'s fork of the
+> **Also maintained by Complear.** This fork of the
 > [AI Coding Tool Validation Kit](https://github.com/bernardopersonal/ai-coding-tool-validation-kit)
-> by Bernardo Plaza (code under the MIT licence, templates and documentation under
-> [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/); see LICENSE and LICENSE-docs).
-> Bernardo Plaza does not endorse this fork. It adds one thing: `kit.py complear`, which sends the
-> evidence the kit's scripts collect to Complear OS (see [Feed Complear OS](#feed-complear-os)).
-> Everything else follows the original kit.
+> by Bernardo Plaza is maintained also by [Complear](https://complear.com) (code under the MIT
+> licence, templates and documentation under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/);
+> see LICENSE and LICENSE-docs). It adds one thing: `kit.py complear`, which sends the evidence the
+> kit's scripts collect to Complear OS (see [Feed Complear OS](#feed-complear-os)). Everything else
+> follows the original kit.
 
 **Using Claude Code or Codex in a regulated team? Good. Is it validated?**
 
