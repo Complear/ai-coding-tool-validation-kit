@@ -1,0 +1,807 @@
+{
+  "framework": {
+    "key": "ai_coding_tool_validation",
+    "name": "AI coding tool validation (kit 0.2.0)",
+    "version": "2026.1",
+    "publisher": "AI Coding Tool Validation Kit, Bernardo Plaza (CC BY 4.0)",
+    "region": "International",
+    "regulation": "ISO 13485 4.1.6",
+    "classes": [],
+    "license": "public",
+    "scope": "both",
+    "default_availability": "selected"
+  },
+  "requirements": [
+    {
+      "citation": "REQ",
+      "kind": "part",
+      "title": "Requirements",
+      "ordinal": 1,
+      "children": [
+        {
+          "citation": "REQ-01",
+          "kind": "clause",
+          "title": "Human approval gate",
+          "ordinal": 1,
+          "body": "Every change to a protected branch needs at least one approval by a qualified human other than the author and the agent launcher, on the final commit.",
+          "attributes": {
+            "context": [
+              "all"
+            ]
+          }
+        },
+        {
+          "citation": "REQ-02",
+          "kind": "clause",
+          "title": "AI cannot approve or merge",
+          "ordinal": 2,
+          "body": "Approvals by AI, bots, apps or CI tokens are not counted; AI identities cannot merge.",
+          "attributes": {
+            "context": [
+              "all"
+            ]
+          }
+        },
+        {
+          "citation": "REQ-03",
+          "kind": "clause",
+          "title": "Required checks before merge",
+          "ordinal": 3,
+          "body": "Tests, SAST, secret scanning, dependency / SOUP gate; violations are blocked.",
+          "attributes": {
+            "context": [
+              "all"
+            ]
+          }
+        },
+        {
+          "citation": "REQ-04",
+          "kind": "clause",
+          "title": "No direct push and no silent bypass",
+          "ordinal": 4,
+          "body": "Direct pushes blocked; admin bypass prevented, or logged and reviewed.",
+          "attributes": {
+            "context": [
+              "all"
+            ]
+          }
+        },
+        {
+          "citation": "REQ-05",
+          "kind": "clause",
+          "title": "Attributability",
+          "ordinal": 5,
+          "body": "Every change traceable to a named human; agent activity distinguishable from human activity.",
+          "attributes": {
+            "context": [
+              "all"
+            ]
+          }
+        },
+        {
+          "citation": "REQ-06",
+          "kind": "clause",
+          "title": "Configuration under control",
+          "ordinal": 6,
+          "body": "Baseline of managed settings, permission mode, deny rules, sandbox, hooks, MCP allow-list, instruction files; users cannot override managed settings.",
+          "attributes": {
+            "context": [
+              "all"
+            ]
+          }
+        },
+        {
+          "citation": "REQ-07",
+          "kind": "clause",
+          "title": "Local guardrails behave as configured",
+          "ordinal": 7,
+          "body": "Denied commands, writes outside the workspace, network restrictions.",
+          "attributes": {
+            "context": [
+              "all"
+            ]
+          }
+        },
+        {
+          "citation": "REQ-08",
+          "kind": "clause",
+          "title": "Model envelope",
+          "ordinal": 8,
+          "body": "Only approved models (enforced where the tool allows), model recorded per PR / session, new models admitted via MA-01.",
+          "attributes": {
+            "context": [
+              "all"
+            ]
+          }
+        },
+        {
+          "citation": "REQ-09",
+          "kind": "clause",
+          "title": "Data handling",
+          "ordinal": 9,
+          "body": "No secrets, PHI or personal data in prompts / repositories beyond what is contractually covered; vendor retention and training terms as contracted (supplier requirement, ISO 13485 clause 7.4).",
+          "attributes": {
+            "context": [
+              "all"
+            ]
+          }
+        },
+        {
+          "citation": "REQ-10",
+          "kind": "clause",
+          "title": "Provenance labelling",
+          "ordinal": 10,
+          "body": "AI-assisted changes are declared (commit trailer and / or PR template).",
+          "attributes": {
+            "context": [
+              "all"
+            ]
+          }
+        },
+        {
+          "citation": "REQ-11",
+          "kind": "clause",
+          "title": "Reversibility",
+          "ordinal": 11,
+          "body": "AI-assisted changes can be reverted with full traceability.",
+          "attributes": {
+            "context": [
+              "all"
+            ]
+          }
+        },
+        {
+          "citation": "REQ-12",
+          "kind": "clause",
+          "title": "Vendor change monitoring",
+          "ordinal": 12,
+          "body": "Releases, deprecations, model changes and terms are monitored and trigger the defined tests.",
+          "attributes": {
+            "context": [
+              "all"
+            ]
+          }
+        },
+        {
+          "citation": "REQ-13",
+          "kind": "clause",
+          "title": "Source citation and preview before write",
+          "ordinal": 13,
+          "body": "Source citation and human preview before any AI-assisted write to a controlled record.",
+          "attributes": {
+            "context": [
+              "doc_drafting"
+            ]
+          }
+        },
+        {
+          "citation": "REQ-14",
+          "kind": "clause",
+          "title": "Bounded write scope and oracle-based verification",
+          "ordinal": 14,
+          "body": "Bounded write scope and oracle-based verification of agent outputs.",
+          "attributes": {
+            "context": [
+              "agents_qms"
+            ]
+          }
+        },
+        {
+          "citation": "REQ-15",
+          "kind": "clause",
+          "title": "AI review is advisory only",
+          "ordinal": 15,
+          "body": "Never a required approval or the only verification.",
+          "attributes": {
+            "context": [
+              "pr_review"
+            ]
+          }
+        },
+        {
+          "citation": "REQ-16",
+          "kind": "clause",
+          "title": "Organisation-owned accounts and SSO",
+          "ordinal": 16,
+          "body": "Organisation-owned accounts / workspace with SSO; no personal accounts for QMS use.",
+          "attributes": {
+            "context": [
+              "all"
+            ]
+          }
+        },
+        {
+          "citation": "REQ-17",
+          "kind": "clause",
+          "title": "Competence",
+          "ordinal": 17,
+          "body": "Users trained on the work instruction before use (ISO 13485 clause 6.2).",
+          "attributes": {
+            "context": [
+              "all"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "citation": "TEST",
+      "kind": "part",
+      "title": "Tests",
+      "ordinal": 2,
+      "children": [
+        {
+          "citation": "IQ",
+          "kind": "chapter",
+          "title": "Installation qualification",
+          "ordinal": 1,
+          "children": [
+            {
+              "citation": "IQ-01",
+              "kind": "clause",
+              "title": "Installation and version recorded per surface",
+              "ordinal": 1,
+              "body": "Installation and version recorded per surface. Verifies REQ-06. Test type: scripted.",
+              "attributes": {
+                "verifies": [
+                  "REQ-06"
+                ],
+                "test_type": [
+                  "scripted"
+                ]
+              }
+            },
+            {
+              "citation": "IQ-02",
+              "kind": "clause",
+              "title": "Account / workspace ownership and SSO",
+              "ordinal": 2,
+              "body": "Account / workspace ownership and SSO. Verifies REQ-16, REQ-05. Test type: scripted.",
+              "attributes": {
+                "verifies": [
+                  "REQ-16",
+                  "REQ-05"
+                ],
+                "test_type": [
+                  "scripted"
+                ]
+              }
+            },
+            {
+              "citation": "IQ-03",
+              "kind": "clause",
+              "title": "Configuration baseline captured and hashed",
+              "ordinal": 3,
+              "body": "Configuration baseline captured by checks/capture_baseline.py and hashed. Verifies REQ-06. Test type: scripted.",
+              "attributes": {
+                "verifies": [
+                  "REQ-06"
+                ],
+                "test_type": [
+                  "scripted"
+                ]
+              }
+            },
+            {
+              "citation": "IQ-04",
+              "kind": "clause",
+              "title": "Surface to identity mapping",
+              "ordinal": 4,
+              "body": "Surface to identity mapping (who or what writes where). Verifies REQ-05. Test type: scripted.",
+              "attributes": {
+                "verifies": [
+                  "REQ-05"
+                ],
+                "test_type": [
+                  "scripted"
+                ]
+              }
+            },
+            {
+              "citation": "IQ-05",
+              "kind": "clause",
+              "title": "Vendor data terms recorded and matched to contract",
+              "ordinal": 5,
+              "body": "Vendor data terms (retention, training, region) recorded and matched to contract. Verifies REQ-09. Test type: scripted.",
+              "attributes": {
+                "verifies": [
+                  "REQ-09"
+                ],
+                "test_type": [
+                  "scripted"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "citation": "OQ",
+          "kind": "chapter",
+          "title": "Operational qualification",
+          "ordinal": 2,
+          "children": [
+            {
+              "citation": "OQ-01",
+              "kind": "clause",
+              "title": "Human gate, positive: real AI-assisted PRs",
+              "ordinal": 1,
+              "body": "Human gate, positive: real AI-assisted PRs merged only after qualified human approval. Verifies REQ-01, REQ-05. Test type: historical / unscripted.",
+              "attributes": {
+                "verifies": [
+                  "REQ-01",
+                  "REQ-05"
+                ],
+                "test_type": [
+                  "historical / unscripted"
+                ]
+              }
+            },
+            {
+              "citation": "OQ-02",
+              "kind": "clause",
+              "title": "Merge without approval is blocked (canary PR)",
+              "ordinal": 2,
+              "body": "Merge without approval is blocked (canary PR). Verifies REQ-01. Test type: scripted, negative.",
+              "attributes": {
+                "verifies": [
+                  "REQ-01"
+                ],
+                "test_type": [
+                  "scripted, negative"
+                ]
+              }
+            },
+            {
+              "citation": "OQ-03",
+              "kind": "clause",
+              "title": "Direct push to protected branch is blocked",
+              "ordinal": 3,
+              "body": "Direct push to protected branch is blocked. Verifies REQ-04. Test type: scripted, negative.",
+              "attributes": {
+                "verifies": [
+                  "REQ-04"
+                ],
+                "test_type": [
+                  "scripted, negative"
+                ]
+              }
+            },
+            {
+              "citation": "OQ-04",
+              "kind": "clause",
+              "title": "AI / bot / Actions approval is not counted and AI identities cannot merge",
+              "ordinal": 4,
+              "body": "AI / bot / Actions approval is not counted and AI identities cannot merge. Verifies REQ-02, REQ-15. Test type: scripted, negative.",
+              "attributes": {
+                "verifies": [
+                  "REQ-02",
+                  "REQ-15"
+                ],
+                "test_type": [
+                  "scripted, negative"
+                ]
+              }
+            },
+            {
+              "citation": "OQ-05",
+              "kind": "clause",
+              "title": "Author or agent launcher cannot satisfy the approval",
+              "ordinal": 5,
+              "body": "Author or agent launcher cannot satisfy the approval. Verifies REQ-01, REQ-02. Test type: scripted, negative.",
+              "attributes": {
+                "verifies": [
+                  "REQ-01",
+                  "REQ-02"
+                ],
+                "test_type": [
+                  "scripted, negative"
+                ]
+              }
+            },
+            {
+              "citation": "OQ-06",
+              "kind": "clause",
+              "title": "Admin bypass prevented, or logged and reviewed",
+              "ordinal": 6,
+              "body": "Admin bypass prevented, or logged and reviewed. Verifies REQ-04. Test type: scripted.",
+              "attributes": {
+                "verifies": [
+                  "REQ-04"
+                ],
+                "test_type": [
+                  "scripted"
+                ]
+              }
+            },
+            {
+              "citation": "OQ-07",
+              "kind": "clause",
+              "title": "Required checks block canary violations",
+              "ordinal": 7,
+              "body": "Required checks block canary violations (failing test, unapproved dependency, secret). Verifies REQ-03, REQ-09. Test type: scripted, negative.",
+              "attributes": {
+                "verifies": [
+                  "REQ-03",
+                  "REQ-09"
+                ],
+                "test_type": [
+                  "scripted, negative"
+                ]
+              }
+            },
+            {
+              "citation": "OQ-08",
+              "kind": "clause",
+              "title": "Local guardrails: denied command, write outside workspace, network",
+              "ordinal": 8,
+              "body": "Local guardrails: denied command, write outside workspace, network. Verifies REQ-07. Test type: scripted, negative.",
+              "attributes": {
+                "verifies": [
+                  "REQ-07"
+                ],
+                "test_type": [
+                  "scripted, negative"
+                ]
+              }
+            },
+            {
+              "citation": "OQ-09",
+              "kind": "clause",
+              "title": "Managed settings cannot be overridden by the user",
+              "ordinal": 9,
+              "body": "Managed settings cannot be overridden by the user. Verifies REQ-06. Test type: scripted, negative.",
+              "attributes": {
+                "verifies": [
+                  "REQ-06"
+                ],
+                "test_type": [
+                  "scripted, negative"
+                ]
+              }
+            },
+            {
+              "citation": "OQ-10",
+              "kind": "clause",
+              "title": "Model envelope enforced where possible and model used recorded",
+              "ordinal": 10,
+              "body": "Model envelope enforced where possible and model used recorded. Verifies REQ-08. Test type: scripted.",
+              "attributes": {
+                "verifies": [
+                  "REQ-08"
+                ],
+                "test_type": [
+                  "scripted"
+                ]
+              }
+            },
+            {
+              "citation": "OQ-11",
+              "kind": "clause",
+              "title": "Provenance label present on AI-assisted changes",
+              "ordinal": 11,
+              "body": "Provenance label present on AI-assisted changes. Verifies REQ-10. Test type: historical.",
+              "attributes": {
+                "verifies": [
+                  "REQ-10"
+                ],
+                "test_type": [
+                  "historical"
+                ]
+              }
+            },
+            {
+              "citation": "OQ-12",
+              "kind": "clause",
+              "title": "Reversibility of an AI-assisted change",
+              "ordinal": 12,
+              "body": "Reversibility of an AI-assisted change. Verifies REQ-11. Test type: scripted.",
+              "attributes": {
+                "verifies": [
+                  "REQ-11"
+                ],
+                "test_type": [
+                  "scripted"
+                ]
+              }
+            },
+            {
+              "citation": "OQ-13",
+              "kind": "clause",
+              "title": "Vendor monitoring routine works as defined",
+              "ordinal": 13,
+              "body": "Vendor monitoring routine works as defined. Verifies REQ-12. Test type: scripted (record review).",
+              "attributes": {
+                "verifies": [
+                  "REQ-12"
+                ],
+                "test_type": [
+                  "scripted (record review)"
+                ]
+              }
+            },
+            {
+              "citation": "OQ-20",
+              "kind": "clause",
+              "title": "Unannounced source-citation probes and preview-before-write",
+              "ordinal": 14,
+              "body": "Unannounced source-citation probes and preview-before-write (document drafting). Verifies REQ-13. Test type: unscripted.",
+              "attributes": {
+                "verifies": [
+                  "REQ-13"
+                ],
+                "test_type": [
+                  "unscripted"
+                ]
+              }
+            },
+            {
+              "citation": "OQ-30",
+              "kind": "clause",
+              "title": "Oracle-based agent verification",
+              "ordinal": 15,
+              "body": "Oracle-based agent verification (frozen snapshot, expected result first, FP/FN). Verifies REQ-14. Test type: scripted.",
+              "attributes": {
+                "verifies": [
+                  "REQ-14"
+                ],
+                "test_type": [
+                  "scripted"
+                ]
+              }
+            },
+            {
+              "citation": "OQ-40",
+              "kind": "clause",
+              "title": "Prompt-injection smoke test when the agent reads untrusted content",
+              "ordinal": 16,
+              "body": "Prompt-injection smoke test when the agent reads untrusted content. Verifies REQ-07, REQ-02. Test type: exploratory.",
+              "attributes": {
+                "verifies": [
+                  "REQ-07",
+                  "REQ-02"
+                ],
+                "test_type": [
+                  "exploratory"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "citation": "MA",
+          "kind": "chapter",
+          "title": "Model admission",
+          "ordinal": 3,
+          "children": [
+            {
+              "citation": "MA-01",
+              "kind": "clause",
+              "title": "Model admission suite",
+              "ordinal": 1,
+              "body": "Model admission suite for every model in the envelope. Verifies REQ-08. Test type: scripted, automated.",
+              "attributes": {
+                "verifies": [
+                  "REQ-08"
+                ],
+                "test_type": [
+                  "scripted, automated"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "citation": "RV",
+          "kind": "chapter",
+          "title": "Retrospective review",
+          "ordinal": 4,
+          "children": [
+            {
+              "citation": "RV-01",
+              "kind": "clause",
+              "title": "Retrospective review (tool already in use)",
+              "ordinal": 1,
+              "body": "Retrospective review of the in-use period before release (not PQ). Verifies REQ-01, REQ-02, REQ-04, REQ-08. Test type: historical.",
+              "attributes": {
+                "verifies": [
+                  "REQ-01",
+                  "REQ-02",
+                  "REQ-04",
+                  "REQ-08"
+                ],
+                "test_type": [
+                  "historical"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "citation": "PQ",
+          "kind": "chapter",
+          "title": "Performance qualification",
+          "ordinal": 5,
+          "children": [
+            {
+              "citation": "PQ-01",
+              "kind": "clause",
+              "title": "In-use monitoring",
+              "ordinal": 1,
+              "body": "In-use monitoring after release (at least 4 weeks or 20 AI-assisted PRs). Verifies REQ-01, REQ-02, REQ-04, REQ-08. Test type: historical.",
+              "attributes": {
+                "verifies": [
+                  "REQ-01",
+                  "REQ-02",
+                  "REQ-04",
+                  "REQ-08"
+                ],
+                "test_type": [
+                  "historical"
+                ]
+              }
+            },
+            {
+              "citation": "PQ-02",
+              "kind": "clause",
+              "title": "Reviewer effectiveness",
+              "ordinal": 2,
+              "body": "Reviewer effectiveness: post-merge QA sample of AI-assisted PRs. Verifies REQ-01. Test type: unscripted.",
+              "attributes": {
+                "verifies": [
+                  "REQ-01"
+                ],
+                "test_type": [
+                  "unscripted"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "questions": [
+    {
+      "key": "validation_profile",
+      "question": "Which validation profile applies to this tool?",
+      "options": [
+        "Lite",
+        "Full"
+      ],
+      "instructions": "Full when any of L1 to L9 applies: the AI output itself counts as a control or as evidence (pinned model policy); an agent writes to QMS systems outside the code-host gate; AI drafts controlled records without independent verification against sources; high-impact GxP use; a CSA high process risk determination; an auditor, notified body or customer expects more depth; earlier audit findings on the tool; AI output used as verification evidence without independent review; an agent with credentials beyond the pull-request path reads untrusted content. Otherwise lite: a qualified human and required CI checks verify every AI-assisted change before it reaches a protected branch.",
+      "rules": [
+        {
+          "when_answer": "Lite",
+          "effect": "excluded",
+          "citations": [
+            "REQ-11",
+            "REQ-12",
+            "REQ-13",
+            "REQ-14",
+            "IQ-01",
+            "IQ-02",
+            "IQ-04",
+            "IQ-05",
+            "OQ-11",
+            "OQ-12",
+            "OQ-13",
+            "OQ-20",
+            "OQ-30",
+            "OQ-40",
+            "RV-01"
+          ]
+        }
+      ]
+    },
+    {
+      "key": "local_or_ci_surface",
+      "question": "Is a local CLI / IDE surface, or a CI / headless surface, in scope?",
+      "options": [
+        "Yes",
+        "No"
+      ],
+      "instructions": "Yes when people run the tool on their own machines or a pipeline runs it headless.",
+      "rules": [
+        {
+          "when_answer": "No",
+          "effect": "excluded",
+          "citations": [
+            "REQ-07"
+          ]
+        }
+      ]
+    },
+    {
+      "key": "ai_pr_review",
+      "question": "Is AI pull-request review in scope (an advisory reviewer or a PR review bot)?",
+      "options": [
+        "Yes",
+        "No"
+      ],
+      "instructions": "Yes when an AI tool comments on or reviews pull requests.",
+      "rules": [
+        {
+          "when_answer": "No",
+          "effect": "excluded",
+          "citations": [
+            "REQ-15"
+          ]
+        }
+      ]
+    },
+    {
+      "key": "doc_drafting",
+      "question": "Does the tool draft controlled records (documents under document control)?",
+      "options": [
+        "Yes",
+        "No"
+      ],
+      "instructions": "Yes when AI drafts any document that becomes a controlled record.",
+      "rules": [
+        {
+          "when_answer": "No",
+          "effect": "excluded",
+          "citations": [
+            "REQ-13",
+            "OQ-20"
+          ]
+        }
+      ]
+    },
+    {
+      "key": "agents_qms",
+      "question": "Do agents write to QMS systems (eQMS, issue tracker, document system) outside a pull request?",
+      "options": [
+        "Yes",
+        "No"
+      ],
+      "instructions": "Yes for any write path that bypasses the code-host gate: an MCP server, API token or scheduled agent.",
+      "rules": [
+        {
+          "when_answer": "No",
+          "effect": "excluded",
+          "citations": [
+            "REQ-14",
+            "OQ-30"
+          ]
+        }
+      ]
+    },
+    {
+      "key": "untrusted_content",
+      "question": "Does an agent read untrusted content (outside comments, web pages, MCP results)?",
+      "options": [
+        "Yes",
+        "No"
+      ],
+      "instructions": "Yes when the agent can read text written by people outside the team.",
+      "rules": [
+        {
+          "when_answer": "No",
+          "effect": "excluded",
+          "citations": [
+            "OQ-40"
+          ]
+        }
+      ]
+    },
+    {
+      "key": "in_use_before_validation",
+      "question": "Was the tool in use before this validation?",
+      "options": [
+        "Yes",
+        "No"
+      ],
+      "instructions": "Yes when changes made with the tool were merged before the release decision; RV-01 then reviews that period.",
+      "rules": [
+        {
+          "when_answer": "No",
+          "effect": "excluded",
+          "citations": [
+            "RV-01"
+          ]
+        }
+      ]
+    }
+  ]
+}
