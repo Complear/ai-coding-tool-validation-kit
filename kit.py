@@ -6,6 +6,10 @@
   python3 kit.py render --config PATH [--profile lite|full] [--out DIR] [--docx] [--force]
   python3 kit.py example-config
   python3 kit.py vars [--update README_DEV.md]
+  python3 kit.py complear record --config PATH --tool TOOL_ID --tool-version V [--evidence DIR]
+                                 --out record.json
+  python3 kit.py complear push record.json        (COMPLEAR_URL, COMPLEAR_UPLOAD_KEY)
+  python3 kit.py complear pack [--out FILE]
 
 Python 3.9+ standard library only.
 """
@@ -13,6 +17,8 @@ Python 3.9+ standard library only.
 from __future__ import annotations
 
 import argparse
+import json
+import os
 import sys
 from pathlib import Path
 from typing import List, Optional
@@ -27,6 +33,7 @@ from kit.config import (LEGACY_PROFILE, PROFILE_KEYS, ConfigError, config_to_jso
                         load_config, variables_markdown)
 from kit.package import (RenderRefused, convert_to_docx, render_package,  # noqa: E402
                          resolve_templates_dir, write_text_lf)
+from kit import complear  # noqa: E402
 from kit.render import RenderError  # noqa: E402
 from kit.wizard import WizardAbort, confirm, run_wizard  # noqa: E402
 
@@ -184,6 +191,48 @@ def cmd_vars(args: argparse.Namespace) -> int:
     return EXIT_OK
 
 
+def cmd_complear_record(args: argparse.Namespace) -> int:
+    try:
+        cfg = load_config(args.config)
+        out = Path(args.out)
+        record = complear.build_record(cfg, args.tool, args.tool_version, Path(args.evidence),
+                                       out.resolve().parent, args.profile)
+    except ConfigError as exc:
+        _err("Configuration error: %s" % exc)
+        return EXIT_CONFIG
+    except complear.RecordError as exc:
+        _err("Error: %s" % exc)
+        return EXIT_RENDER
+    if out.parent and not out.parent.exists():
+        out.parent.mkdir(parents=True, exist_ok=True)
+    write_text_lf(out, json.dumps(record, indent=2, ensure_ascii=False) + "\n")
+    [scope] = record["scopes"]
+    print("Wrote %s: %d evidence files; %s, %d tests in scope (%s profile)" % (
+        out, len(record["artefacts"]), scope["framework"]["key"], len(scope["clauses"]),
+        scope["answers"]["validation_profile"].lower()))
+    return EXIT_OK
+
+
+def cmd_complear_push(args: argparse.Namespace) -> int:
+    url, key = os.environ.get("COMPLEAR_URL"), os.environ.get("COMPLEAR_UPLOAD_KEY")
+    if not url or not key:
+        _err("Set COMPLEAR_URL and COMPLEAR_UPLOAD_KEY (a conformity record upload key).")
+        return EXIT_CONFIG
+    status, body = complear.push(Path(args.record), url, key)
+    print(json.dumps(body, indent=2, ensure_ascii=False))
+    return EXIT_OK if status == 200 else EXIT_RENDER
+
+
+def cmd_complear_pack(args: argparse.Namespace) -> int:
+    text = complear.pack_json(REPO_ROOT / "templates")
+    if args.out:
+        write_text_lf(Path(args.out), text)
+        print("Wrote %s" % args.out)
+    else:
+        sys.stdout.write(text)
+    return EXIT_OK
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="kit.py", description="AI Coding Tool Validation Kit: configure and render a "
@@ -234,6 +283,32 @@ def build_parser() -> argparse.ArgumentParser:
     p_vars.add_argument("--update", metavar="FILE",
                         help="rewrite the generated variables block in FILE")
     p_vars.set_defaults(func=cmd_vars)
+
+    p_complear = sub.add_parser("complear", help="feed the evidence to Complear OS (conformity "
+                                                 "record)")
+    complear_sub = p_complear.add_subparsers(dest="complear_command", metavar="ACTION")
+    complear_sub.required = True
+    p_record = complear_sub.add_parser("record", help="build a conformity record from the "
+                                                      "evidence of one tool")
+    p_record.add_argument("--config", required=True, metavar="PATH", help="config file (JSON)")
+    p_record.add_argument("--tool", required=True, metavar="TOOL_ID",
+                          help="the tool's tool_id in the config, e.g. CLAUDE")
+    p_record.add_argument("--tool-version", required=True, metavar="VERSION",
+                          help="the validated tool version (as recorded in IQ-01 / IQ-03)")
+    p_record.add_argument("--evidence", default="evidence", metavar="DIR",
+                          help="evidence root holding <TOOL_ID>/ and GEN/ (default: evidence)")
+    p_record.add_argument("--profile", choices=PROFILE_KEYS, default=None,
+                          help="overrides the config's \"profile\"")
+    p_record.add_argument("--out", required=True, metavar="FILE", help="record to write")
+    p_record.set_defaults(func=cmd_complear_record)
+    p_push = complear_sub.add_parser("push", help="send a record to Complear OS "
+                                                  "(COMPLEAR_URL, COMPLEAR_UPLOAD_KEY)")
+    p_push.add_argument("record")
+    p_push.set_defaults(func=cmd_complear_push)
+    p_pack = complear_sub.add_parser("pack", help="print or write Complear's framework pack, "
+                                                  "generated from the templates")
+    p_pack.add_argument("--out", metavar="FILE", help="file to write (default: stdout)")
+    p_pack.set_defaults(func=cmd_complear_pack)
     return parser
 
 

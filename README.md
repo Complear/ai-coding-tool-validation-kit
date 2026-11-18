@@ -1,5 +1,13 @@
 # AI Coding Tool Validation Kit
 
+> **Complear's fork.** This is [Complear](https://complear.com)'s fork of the
+> [AI Coding Tool Validation Kit](https://github.com/bernardopersonal/ai-coding-tool-validation-kit)
+> by Bernardo Plaza (code under the MIT licence, templates and documentation under
+> [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/); see LICENSE and LICENSE-docs).
+> Bernardo Plaza does not endorse this fork. It adds one thing: `kit.py complear`, which sends the
+> evidence the kit's scripts collect to Complear OS (see [Feed Complear OS](#feed-complear-os)).
+> Everything else follows the original kit.
+
 **Using Claude Code or Codex in a regulated team? Good. Is it validated?**
 
 New to this? [Terms you'll meet](#terms-youll-meet) explains each term in 1 line, and [GUIDE.md](GUIDE.md) is a 2-page intro.
@@ -180,13 +188,47 @@ People sign it themselves, in your eQMS or with an e-signature. Any conclusion t
 
 Executed fictional packages: [examples/acme-medsoft-lite/](examples/acme-medsoft-lite/README.md) (lite) and [examples/acme-medsoft/](examples/acme-medsoft/README.md) (full).
 
+## Feed Complear OS
+
+Complear OS tracks the validation as a framework, `ai_coding_tool_validation`, whose requirements
+and tests are this kit's own (REQ-01 to REQ-17, IQ-01 to PQ-02).
+`kit.py complear` packs the evidence of one tool into a conformity record (schema 0.3, in
+`complear/`) and sends it to Complear's conformity records API:
+
+```bash
+python3 kit.py complear record --config kit.config.json --tool CLAUDE --tool-version 2.1.0 \
+  --evidence evidence --out complear-record.json
+export COMPLEAR_URL=https://<workspace>.complear.com COMPLEAR_UPLOAD_KEY=ck_live_...
+python3 kit.py complear push complear-record.json
+```
+
+- **What goes in:** every evidence JSON with a top-level `result` under `evidence/<TOOL>/<TEST-ID>/`
+  and `evidence/GEN/<TEST-ID>/`, with its SHA-256 and its outcome (`pass`, `fail`, or
+  inconclusive). Exploratory runs (`evidence/_exploratory/`, or any folder that isn't a test ID)
+  and the Markdown twins stay out.
+- **The scope:** the profile and the scoping answers come from `kit.config.json` (contexts,
+  surfaces, `already_in_use`). Whether an agent reads untrusted content (OQ-40) is confirmed in the
+  plan, so it's answered only when hard stop L9 applies.
+- **In Complear:** each file becomes an evidence item, offered for review and never approved,
+  linked to its test. People conclude and sign, as the kit requires. Sending the same record twice
+  is safe.
+- **Before you push:** a Complear admin turns on the conformity records API, applies the
+  `ai_coding_tool_validation` framework on a branch, and creates an upload key for that branch
+  (Settings, API keys, purpose "Conformity record upload"). A test that isn't applied there comes
+  back as `unmatched`.
+
+`python3 kit.py complear pack` regenerates the framework from `templates/full/`, so a template
+change reaches Complear with the same IDs (`tests/test_complear.py` fails while the committed pack
+is out of date).
+
 ## What you get
 
 ```
 README.md, GUIDE.md          this file; a 2-page guide for QA/RA leads (print copy: docs/GUIDE.pdf)
 README_DEV.md                template syntax, variables and profiles, how the engine works
 CHANGELOG.md, CONTRIBUTING.md, LICENSE, LICENSE-docs
-kit.py, kit/                 CLI (init, render, example-config, vars), wizard, strict template engine
+kit.py, kit/                 CLI (init, render, example-config, vars, complear), wizard, strict template engine
+complear/                    Complear OS: the framework pack generated from the templates, the conformity record schema
 templates/lite/              *.md.tmpl of the lite profile (syntax: README_DEV.md)
 templates/full/              *.md.tmpl of the full profile
 checks/                      evidence scripts (details: checks/README.md)

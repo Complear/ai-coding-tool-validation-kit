@@ -6,6 +6,10 @@ For organisations that have validated a tool with the kit: a new kit version is 
 
 ## Unreleased
 
+### Added (Complear fork)
+
+- `kit.py complear record` packs one tool's evidence into a conformity record (schema 0.3), `kit.py complear push` sends it to Complear OS, and `kit.py complear pack` generates Complear's `ai_coding_tool_validation` framework from `templates/full/`. Standard library only; `complear/` holds the generated pack and the record schema.
+
 ### Changed
 
 - Editorial pass on the public documentation (README.md, GUIDE.md, CONTRIBUTING.md, `docs/`, `checks/`, `admission/`, `tools/` and example READMEs): plainer wording, shorter paragraphs. The same pass rewords some sentences in the templates of both profiles, the filled examples and user-facing script messages. Facts, commands, paths, IDs, links and requirements are unchanged.
